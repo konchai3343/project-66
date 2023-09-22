@@ -15,13 +15,16 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState } from "react";
-// node.js library that concatenates classes (strings)
-import classnames from "classnames";
-// javascipt plugin for creating charts
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useEffect, useState } from "react";
+import Axios from "axios"
+
 import Chart from "chart.js";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { jsPDF } from "jspdf";
+import "jspdf/dist/polyfills.es.js";
+import "jspdf-autotable";
+import './THSarabun-normal';
 // reactstrap components
 import {
   Button,
@@ -36,8 +39,12 @@ import {
   Container,
   Row,
   Col,
+  FormGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
+  Input
 } from "reactstrap";
-
 // core components
 import {
   chartOptions,
@@ -45,10 +52,13 @@ import {
   chartExample1,
   chartExample2,
 } from "variables/charts.js";
-
 import Header from "components/Headers/Header.js";
 
+
 const Index = (props) => {
+  const todayDate = new Date().toLocaleDateString('en-CA')
+
+
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
 
@@ -56,280 +66,213 @@ const Index = (props) => {
     parseOptions(Chart, chartOptions());
   }
 
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
+  const [Produc_list, setProduc_list] = useState([]);
+  const [Sale_list, setsale_list] = useState([]);
+  const [date, setDate] = useState("");
+  const Item = () => {
+    Axios.post("http://localhost:3001/date", {
+      date: date
+    }).then((Response) => {
+      setsale_list(Response.data);
+    })
+  }
+  const deleteI = (number) => {
+    Axios.delete(`http://localhost:3001/delete/${number}`).then((Response) => {
+      setsale_list(
+        Sale_list.filter((val) => {
+          return val.number != number;
+        })
+      )
+    })
+  }
+
+
+  const [Name, setName] = useState("");
+  const [Number, setNumber] = useState('');
+  const [Tank, setTank] = useState('');
+  const [Bottle, setBottle] = useState('');
+  const [Pet, setPet] = useState('');
+  
+  const validationSchema = Yup.object().shape({
+    Number: Yup.string().required('กรุณากรอกเลขบิล'),
+    Tank: Yup.number().min(0, 'จำนวนต้องไม่น้อยกว่า 0').required('กรุณากรอกจำนวน'),
+    Bottle: Yup.number().min(0, 'จำนวนต้องไม่น้อยกว่า 0').required('กรุณากรอกจำนวน'),
+    Pet: Yup.number().min(0, 'จำนวนต้องไม่น้อยกว่า 0').required('กรุณากรอกจำนวน'),
+  });
+
+  const initialValues = {
+    Number: '',
+    Tank: '',
+    Bottle: '',
+    Pet: '',
   };
+  const onSubmit = (values, { resetForm }) => {
+      Axios.put("http://localhost:3001/EditSale", {
+        Name: values.Name,
+        Number: values.Number,
+        Tank: values.Tank,
+        Bottle: values.Bottle,
+        Pet: values.Pet,
+        date: todayDate
+      })
+        .then(() => {
+          alert('แก้ไขข้อมูลสำเร็จ');
+          resetForm(); // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
+          Item()
+        })
+        .catch((error) => {
+          console.error('เกิดข้อผิดพลาดในการแก้ไขข้อมูล', error);
+        });
+    
+  };
+
+
+
+  const exportPDF = () => {
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+    const title = `Sale Report                                                                                                                วันที่ : ${date}`;
+    const headers = [["ชื่อร้าน", "เลขใบเสร็จ", "น้ำถัง", "น้ำลัง", "ขวดเพ็ท"]];
+
+    const data = Sale_list.map(elt => [elt.name, elt.number, elt.tank, elt.bottle, elt.pet]);
+    const content = {
+      startY: 60,
+      head: headers,
+      headStyles: { font: "THSarabun", fontStyle: 'normal', halign: "left", fontSize: 15 },
+      body: data,
+      bodyStyles: { font: "THSarabun", fontStyle: 'normal', halign: "left", fontSize: 15 },
+    };
+    doc.addFont("THSarabun.ttf", "THSarabun", "normal");
+    doc.setFont("THSarabun");
+    doc.setFontSize(15);
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf");
+  }
+
+
+
   return (
     <>
       <Header />
       {/* Page content */}
-      <Container className="mt--7" fluid>
-        <Row>
-          <Col className="mb-5 mb-xl-0" xl="8">
-            <Card className="bg-gradient-default shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
-                    </h6>
-                    <h2 className="text-white mb-0">Sales value</h2>
-                  </div>
-                  <div className="col">
-                    <Nav className="justify-content-end" pills>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 1,
-                          })}
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 1)}
-                        >
-                          <span className="d-none d-md-block">Month</span>
-                          <span className="d-md-none">M</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 2,
-                          })}
-                          data-toggle="tab"
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 2)}
-                        >
-                          <span className="d-none d-md-block">Week</span>
-                          <span className="d-md-none">W</span>
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                {/* Chart */}
-                <div className="chart">
-                  <Line
-                    data={chartExample1[chartExample1Data]}
-                    options={chartExample1.options}
-                    getDatasetAtEvent={(e) => console.log(e)}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="bg-transparent">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
-                    </h6>
-                    <h2 className="mb-0">Total orders</h2>
-                  </div>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                {/* Chart */}
-                <div className="chart">
-                  <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
+      <Container className="mt--8" fluid>
         <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" xl="8">
+          <Col className="mb-5 mb-xl-0" xl="9">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
+                    <h3 className="mb-0">Sale Report</h3>
                   </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
+                  <form>
+                    <input type="date" onChange={(event) => { setDate(event.target.value) }} />
+                  </form>
+                  <Button
+                    color="primary"
+                    size="sm"
+                    className="fas fa-search"
+                    type="Submit"
+                    onClick={Item}
+                  >
+                  </Button>
+                  <Button
+                    color="primary"
+                    size="sm"
+                    className="fas fa-file-pdf"
+                    type="Submit"
+                    onClick={exportPDF}
+                  >
+                  </Button>
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
+              <Table id="myTable" className="align-items-center table-flush" >
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
+                    <th scope="col">ชื่อร้าน</th>
+                    <th scope="col">เลขบิล</th>
+                    <th scope="col">น้ำถัง</th>
+                    <th scope="col">น้ำลัง</th>
+                    <th scope="col">ขวดเพ็ท</th>
+                    <th scope="col">จำนวนเงิน</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">/argon/</th>
-                    <td>4,569</td>
-                    <td>340</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/index.html</th>
-                    <td>3,985</td>
-                    <td>319</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/charts.html</th>
-                    <td>3,513</td>
-                    <td>294</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/tables.html</th>
-                    <td>2,050</td>
-                    <td>147</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/profile.html</th>
-                    <td>1,795</td>
-                    <td>190</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
+                  {
+                    Sale_list.map((val, key) => {
+                      return (
+                        <tr>
+                          <th scope="row">{val.name}</th>
+                          <td>{val.number}</td>
+                          <td>{val.tank}</td>
+                          <td>{val.bottle}</td>
+                          <td>{val.pet}</td>
+                          <td>{((val.tank) * 50) + ((val.bottle) * 40) + ((val.pet) * 40)}</td>
+                          <td><Button color="primary" size="sm"
+                            onClick={() => { if (window.confirm(`ต้องการลบข้อมูลบิลหมายเลข ${val.number} หรือไม่`)) deleteI(val.number) }}><i class="fa fa-trash" /></Button></td>
+                        </tr>
+                      )
+                    })
+                  }
                 </tbody>
               </Table>
             </Card>
           </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
-              </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col" />
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">60%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="60"
-                            barClassName="bg-gradient-danger"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">70%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="70"
-                            barClassName="bg-gradient-success"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">80%</span>
-                        <div>
-                          <Progress max="100" value="80" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">75%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="75"
-                            barClassName="bg-gradient-info"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">30%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="30"
-                            barClassName="bg-gradient-warning"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card>
+
+          <Col className="mb-5 mb-xl-0" xl="3">
+            <Row className="mt-0">
+              <Card className="shadow">
+                <CardHeader className="bg-transparent">
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h3 className="mb-0">แก้ไขรายการขาย</h3>
+                    </div>
+                  </Row>
+                </CardHeader>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                  <Form>
+                    <Table className="align-items-center table-flush" responsive>
+                      <tbody>
+                        <tr>
+                        <td>
+                        <Field class="form-control form-control-sm" type="number" name="Number" placeholder="เลขบิล" />
+                        <ErrorMessage name="Number" component="div" className="text-danger" />
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <Field class="form-control form-control-sm" type="number" name="Tank" placeholder="น้ำถัง 20 ลิตร" />
+                        <ErrorMessage name="Tank" component="div" className="text-danger" />
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <Field class="form-control form-control-sm" type="number" name="Bottle" placeholder="น้ำลัง 20 ขวด" />
+                        <ErrorMessage name="Bottle" component="div" className="text-danger" />
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <Field class="form-control form-control-sm" type="number" name="Pet" placeholder="ขวดเพ็ท1แพ็ค" />
+                        <ErrorMessage name="Pet" component="div" className="text-danger" />
+                        </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                    <div className="col text-center">
+                        <Button  className="my-4" color="primary" type="submit" >บันทึก</Button>
+                    </div>
+                  </Form>
+                </Formik>
+              </Card>
+            </Row>
           </Col>
         </Row>
+
       </Container>
     </>
   );

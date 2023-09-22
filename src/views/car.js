@@ -25,17 +25,13 @@ import "assets/scss/argon-dashboard-react.scss";
 
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
-import Deli from "layouts/Deliver";
-import Manu from "layouts/Manufac";
-import Profile from "views/examples/Profile";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/admin/*" element={<AdminLayout />} />
-      <Route path="/deliver/*" element={<Deli />} />
-      <Route path="/manufac/*" element={<Manu />} />
       <Route path="/auth/*" element={<AuthLayout />} />
       <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>

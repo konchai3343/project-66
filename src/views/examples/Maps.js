@@ -15,120 +15,168 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
-
+import { useState } from "react";
+import Axios from 'axios'
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+// react component that copies the given text inside your clipboard
+import { CopyToClipboard } from "react-copy-to-clipboard";
 // reactstrap components
-import { Card, Container, Row } from "reactstrap";
-
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  Container,
+  FormGroup,
+  Input,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
+  Row,
+  Col,
+  UncontrolledTooltip,
+  Alert,
+} from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
 
-const MapWrapper = () => {
-  const mapRef = React.useRef(null);
-  React.useEffect(() => {
-    let google = window.google;
-    let map = mapRef.current;
-    let lat = "40.748817";
-    let lng = "-73.985428";
-    const myLatlng = new google.maps.LatLng(lat, lng);
-    const mapOptions = {
-      zoom: 12,
-      center: myLatlng,
-      scrollwheel: false,
-      zoomControl: true,
-      styles: [
-        {
-          featureType: "administrative",
-          elementType: "labels.text.fill",
-          stylers: [{ color: "#444444" }],
-        },
-        {
-          featureType: "landscape",
-          elementType: "all",
-          stylers: [{ color: "#f2f2f2" }],
-        },
-        {
-          featureType: "poi",
-          elementType: "all",
-          stylers: [{ visibility: "off" }],
-        },
-        {
-          featureType: "road",
-          elementType: "all",
-          stylers: [{ saturation: -100 }, { lightness: 45 }],
-        },
-        {
-          featureType: "road.highway",
-          elementType: "all",
-          stylers: [{ visibility: "simplified" }],
-        },
-        {
-          featureType: "road.arterial",
-          elementType: "labels.icon",
-          stylers: [{ visibility: "off" }],
-        },
-        {
-          featureType: "transit",
-          elementType: "all",
-          stylers: [{ visibility: "off" }],
-        },
-        {
-          featureType: "water",
-          elementType: "all",
-          stylers: [{ color: "#5e72e4" }, { visibility: "on" }],
-        },
-      ],
-    };
+const Icons = () => {
+  const todayDate = new Date().toLocaleDateString('en-CA')
+  const [Name, setName] = useState("");
+  const [Number, setNumber] = useState('');
+  const [Tank, setTank] = useState(0);
+  const [Bottle, setBottle] = useState(0);
+  const [Pet, setPet] = useState(0);
+  const [date, setDate] = useState('');
 
-    map = new google.maps.Map(map, mapOptions);
+  const validationSchema = Yup.object().shape({
+    Name: Yup.string().required('กรุณากรอกผู้ซื้อ'),
+    Number: Yup.number().required('กรุณากรอกเลขใบเสร็จ'),
+    Tank: Yup.number().required('กรุณากรอกน้ำถัง'),
+    Bottle: Yup.number().required('กรุณากรอกน้ำลัง'),
+    Pet: Yup.number().required('กรุณากรอกขวดเพ็ท'),
+  });
 
-    const marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-      animation: google.maps.Animation.DROP,
-      title: "Light Bootstrap Dashboard PRO React!",
+  const [submitError, setSubmitError] = useState(null);
+
+  const add_sale = (values) => {
+    Axios.post('http://localhost:3001/add_sale', {
+      Name: values.Name,
+      Number: values.Number,
+      Tank: values.Tank,
+      Bottle: values.Bottle,
+      Pet: values.Pet,
+      date: todayDate
+    }).then(() => {
+      alert('บันทึกสำเร็จ');
+      
+    }).catch((error) => {
+      console.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล', error);
     });
+  };
 
-    const contentString =
-      '<div class="info-window-content"><h2>Light Bootstrap Dashboard PRO React</h2>' +
-      "<p>A premium Admin for React-Bootstrap, Bootstrap, React, and React Hooks.</p></div>";
 
-    const infowindow = new google.maps.InfoWindow({
-      content: contentString,
+  const initialValues = {
+    Name: "",
+    Number: "",
+    Tank: 0,
+    Bottle: 0,
+    Pet: 0,
+  };
+  
+  const onSubmit = (values, { resetForm }) => {
+    Axios.post('http://localhost:3001/CheckNumber', {
+      Number: values.Number,
+      date: todayDate
+    }).then((Response) => {
+      if (Response.data.length === 0) {
+        add_sale(values);
+        resetForm();
+      } else {
+        setSubmitError('ใบเสร็จนี้ถูกบันทึกไปแล้ว');
+      }
     });
+  };
 
-    google.maps.event.addListener(marker, "click", function () {
-      infowindow.open(map, marker);
+  const check_sale = () => {
+    Axios.post('http://localhost:3001/CheckNumber', {
+      Number: Number,
+      date: todayDate
+    }).then((Response) => {
+      if (Response.data.length == 0) {
+        add_sale()
+        alert('บันทึกสำเร็จ');
+      } else {
+        alert('ใบเสร็จนี้ถูกบันทึกไปแล้ว');
+      }
     });
-  }, []);
-  return (
-    <>
-      <div
-        style={{ height: `600px` }}
-        className="map-canvas"
-        id="map-canvas"
-        ref={mapRef}
-      ></div>
-    </>
-  );
-};
+  }
 
-const Maps = () => {
+
   return (
     <>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
-        <Row>
+        {/* Table */}
+        <Col className="center" xl="6">
           <div className="col">
-            <Card className="shadow border-0">
-              <MapWrapper />
+            <Card className="shadow">
+              <CardHeader className="bg-transparent">
+                <h3 className="mb-0">บันทึกรายการขาย</h3>
+              </CardHeader>
+
+
+              <CardBody className="px-lg-5 py-lg-5">
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                  onSubmit={onSubmit}
+                >
+                  <Form>
+                    <div>
+                      <label htmlFor="Name">ผู้ซื้อ</label>
+                      <Field type="text" id="Name" name="Name" className="form-control form-control-sm"/>
+                      <ErrorMessage name="Name" component="div" className="text-danger" />
+                    </div>
+                    <div>
+                      <label htmlFor="Number">เลขใบเสร็จ</label>
+                      <Field type="number"id="Number"name="Number"className="form-control form-control-sm"/>
+                      <ErrorMessage name="Number" component="div" className="text-danger" />
+                    </div>
+                    <div>
+                      <label htmlFor="Tank">น้ำถัง</label>
+                      <Field type="number"id="Tank"name="Tank"className="form-control form-control-sm" />
+                      <ErrorMessage name="Tank" component="div" className="text-danger" />
+                    </div>
+                    <div>
+                      <label htmlFor="Bottle">น้ำลัง</label>
+                      <Field type="number" id="Bottle"name="Bottle"className="form-control form-control-sm"/>
+                      <ErrorMessage name="Bottle" component="div" className="text-danger" />
+                    </div>
+                    <div>
+                      <label htmlFor="Pet">ขวดเพ็ท</label>
+                      <Field type="number" id="Pet" name="Pet" className="form-control form-control-sm"/>
+                      <ErrorMessage name="Pet" component="div" className="text-danger" />
+                    </div>
+                    {submitError && (
+                      <div className="text-danger">{submitError}</div>
+                    )}
+                    <div className="text-center">
+                      <Button className="my-4" color="primary" type="submit">
+                        บันทึกข้อมูล
+                      </Button>
+                    </div>
+                  </Form>
+                </Formik>
+              </CardBody>
             </Card>
           </div>
-        </Row>
+        </Col>
       </Container>
     </>
   );
 };
 
-export default Maps;
+export default Icons;

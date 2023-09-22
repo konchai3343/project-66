@@ -16,61 +16,70 @@
 
 */
 import Index from "views/Index.js";
+import Icons from "views/examples/Icons.js";
 import Profile from "views/examples/Profile.js";
 import Maps from "views/examples/Maps.js";
 import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
+import AllStock from "views/examples/AllStock";
+import Order from "views/examples/Order";
+import EditU from "views/examples/EditU";
+
 
 var routes = [
   {
     path: "/index",
-    name: "Dashboard",
-    icon: "ni ni-tv-2 text-primary",
+    name: "รายงานการขาย",
+    icon: "fa-solid fa-money-check-dollar",
     component: <Index />,
     layout: "/admin",
   },
   {
-    path: "/icons",
-    name: "Icons",
-    icon: "ni ni-planet text-blue",
+    path: "/AllStock",
+    name: "การรายสต็อกทั้งหมด",
+    icon: "fa-solid fa-bottle-water",
+    component: <AllStock />,
+    layout: "/admin",
+  },
+  {
+    path: "/Produc",
+    name: "บันทึกการผลิต",
+    icon: "fa-solid fa-clipboard",
     component: <Icons />,
     layout: "/admin",
   },
   {
-    path: "/maps",
-    name: "Maps",
-    icon: "ni ni-pin-3 text-orange",
+    path: "/SaleReport",
+    name: "บันทึกรายการขาย",
+    icon: "fa-solid fa-clipboard",
     component: <Maps />,
     layout: "/admin",
   },
   {
-    path: "/user-profile",
-    name: "User Profile",
-    icon: "ni ni-single-02 text-yellow",
-    component: <Profile />,
+    path: "/Order",
+    name: "คำสั่งซื้อ",
+    icon: "fa-solid fa-cart-shopping",
+    component: <Order />,
     layout: "/admin",
   },
   {
-    path: "/tables",
-    name: "Tables",
-    icon: "ni ni-bullet-list-67 text-red",
-    component: <Tables />,
+    path: "/EditU",
+    name: "บัญชีผู้ใช้",
+    icon: "fa-solid fa-user",
+    component: <EditU />,
     layout: "/admin",
   },
   {
     path: "/login",
-    name: "Login",
-    icon: "ni ni-key-25 text-info",
+    name: "ออกจากระบบ",
+    icon: "fa-solid fa-right-from-bracket",
     component: <Login />,
     layout: "/auth",
   },
   {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
+    path: "/OrderProduc",
+    component: <Profile />,
     layout: "/auth",
   },
 ];
