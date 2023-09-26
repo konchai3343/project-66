@@ -26,45 +26,25 @@ import {
     Button,
     Card,
     CardHeader,
-    CardBody,
-    NavItem,
-    NavLink,
-    Nav,
-    Progress,
     Table,
     Container,
     Row,
     Col,
-    FormGroup,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Input
 } from "reactstrap";
 // core components
 import {
     chartOptions,
     parseOptions,
-    chartExample1,
-    chartExample2,
 } from "variables/charts.js";
 import Header from "components/Headers/Header.js";
 
 
 const EditU = (props) => {
-    const todayDate = new Date().toLocaleDateString('en-CA')
-
-
-    const [activeNav, setActiveNav] = useState(1);
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
 
     if (window.Chart) {
         parseOptions(Chart, chartOptions());
     }
 
-    const [Produc_list, setProduc_list] = useState([]);
-    const [Sale_list, setsale_list] = useState([]);
-    const [date, setDate] = useState("");
     const [user, setUser] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const User = () => {
@@ -77,18 +57,12 @@ const EditU = (props) => {
         User()
     });
 
-    const Item = () => {
-        Axios.post("http://localhost:3001/date", {
-            date: date
-        }).then((Response) => {
-            setsale_list(Response.data);
-        })
-    }
+    
     const deleteI = (Name) => {
         Axios.delete(`http://localhost:3001/deleteU/${Name}`).then((Response) => {
             setUser(
                 user.filter((val) => {
-                    return val.Name != Name;
+                    return val.Name !== Name;
                 })
             )
         })

@@ -19,36 +19,20 @@ import { useState } from "react";
 import Axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-// react component that copies the given text inside your clipboard
-import { CopyToClipboard } from "react-copy-to-clipboard";
-// reactstrap components
 import {
   Button,
   Card,
   CardHeader,
-  CardBody,
   Container,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
   Col,
-  UncontrolledTooltip,
 } from "reactstrap";
-// core components
 import Header from "components/Headers/Header.js";
-
-
-
 
 const M_Stock = () => {
   const todayDate = new Date().toLocaleDateString('en-CA')
   const [FS, setFS] = useState(0);    const [DFS, setDFS] = useState(0);  
   const [FL, setFL] = useState(0);   const [DFL, setDFL] = useState(0);  
-  const [FM, setFM] = useState(0);   const [DFM, setDFM] = useState(0); 
-  const [date, setDate] = useState('');
+  const [FM, setFM] = useState(0);   const [DFM, setDFM] = useState(0);
 
   const validationSchema = Yup.object().shape({
     FS: Yup.number().min(0, 'จำนวนต้องไม่น้อยกว่า 0').required('กรุณากรอกจำนวน'),

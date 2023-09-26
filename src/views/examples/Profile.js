@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React from "react";
 import Axios from 'axios'
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -8,15 +8,12 @@ import {
   Card,
   CardHeader,
   CardBody,
-  FormGroup,
-  Input,
   Container,
   Row,
-  Table,
   Col,
 } from "reactstrap";
 // core components
-import UserHeader from "components/Headers/UserHeader.js";
+
 
 const Profile = () => {
 

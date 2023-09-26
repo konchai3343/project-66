@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -34,13 +33,13 @@ const Login = () => {
     })
     .then (response => response.json())
     .then(data => {
-      if(data.status == 'ผู้จัดการ'){
+      if(data.status === 'ผู้จัดการ'){
           window.location = '/admin/index'
       }
-      if(data.status == 'พนักงานผลิต') {
+      if(data.status === 'พนักงานผลิต') {
         window.location = '/manufac/Stock'
       }
-      if(data.status == 'พนักงานส่งน้ำ') {
+      if(data.status === 'พนักงานส่งน้ำ') {
         window.location = '/deliver/Stock'
     }
       

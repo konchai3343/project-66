@@ -15,44 +15,24 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Axios from "axios"
-// node.js library that concatenates classes (strings)
-import classnames from "classnames";
-// javascipt plugin for creating charts
 import Chart from "chart.js";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
-import ReactDatetime from "react-datetime";
-import moment from 'moment';
-// reactstrap components
 import {
     Button,
     Card,
     CardHeader,
-    CardBody,
-    CardFooter,
-    NavItem,
-    NavLink,
-    Nav,
-    Progress,
     Table,
     Container,
     Row,
     Col,
-    FormGroup,
     Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
 } from "reactstrap";
 
 // core components
 import {
     chartOptions,
     parseOptions,
-    chartExample1,
-    chartExample2,
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
@@ -64,10 +44,6 @@ import Header from "components/Headers/Header.js";
 
 
 const AllStock = (props) => {
-
-
-    const [activeNav, setActiveNav] = useState(1);
-    const [chartExample1Data, setChartExample1Data] = useState("data1");
 
     if (window.Chart) {
         parseOptions(Chart, chartOptions());
@@ -83,8 +59,6 @@ const AllStock = (props) => {
     const [M, setM] = useState(0); const [OM, setOM] = useState(0); const [GM, setGM] = useState(0);
     const [FM, setFM] = useState(0); const [CM, setCM] = useState(0); const [DFM, setDFM] = useState(0); const [DCM, setDCM] = useState(0);
 
-    const [Sale_list, setsale_list] = useState([]);
-
     //-------------------------- Search and Create Teble -------------------------------//
     const [Produc_Stock, setProduc_Stock] = useState([]);
     const todayDate = new Date().toLocaleDateString('en-CA')
@@ -93,7 +67,7 @@ const AllStock = (props) => {
         Axios.post("http://localhost:3001/allstock", {
             date: date
         }).then((Response) => {
-            if (Response.data.length == 0) {
+            if (Response.data.length === 0) {
                 alert('ไม่พบข้อมูล')
                 O_pro()
             } else {
@@ -106,17 +80,7 @@ const AllStock = (props) => {
 
 
 
-    const checkday = () => {
-        Axios.post("http://localhost:3001/check", {
-            date: date
-        })
-            .then((Response) => {
-                if (Response.data.length == 0) {
-                    alert('ไม่พบข้อมูล')
-                    O_pro()
-                }
-            })
-    }
+    
     const O_pro = () => {
         Axios.post("http://localhost:3001/new", {
             S: S, OS: OS, GS: GS, FS: FS, DFS: DFS, CS: CS, DCS: DCS,
@@ -139,14 +103,6 @@ const AllStock = (props) => {
         alert('บันทึกข้อมูลสำเร็จ')
     }
     }
-
-
-
-    const toggleNavs = (e, index) => {
-        e.preventDefault();
-        setActiveNav(index);
-        setChartExample1Data("data" + index);
-    };
 
 
 

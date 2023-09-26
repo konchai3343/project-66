@@ -17,7 +17,7 @@
 */
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Axios from "axios"
 
 import Chart from "chart.js";
@@ -30,27 +30,15 @@ import {
   Button,
   Card,
   CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
   Table,
   Container,
   Row,
   Col,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Input
 } from "reactstrap";
 // core components
 import {
   chartOptions,
   parseOptions,
-  chartExample1,
-  chartExample2,
 } from "variables/charts.js";
 import Header from "components/Headers/Header.js";
 
@@ -58,15 +46,10 @@ import Header from "components/Headers/Header.js";
 const Index = (props) => {
   const todayDate = new Date().toLocaleDateString('en-CA')
 
-
-  const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
-
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
 
-  const [Produc_list, setProduc_list] = useState([]);
   const [Sale_list, setsale_list] = useState([]);
   const [date, setDate] = useState("");
   const Item = () => {
@@ -80,18 +63,11 @@ const Index = (props) => {
     Axios.delete(`http://localhost:3001/delete/${number}`).then((Response) => {
       setsale_list(
         Sale_list.filter((val) => {
-          return val.number != number;
+          return val.number !== number;
         })
       )
     })
   }
-
-
-  const [Name, setName] = useState("");
-  const [Number, setNumber] = useState('');
-  const [Tank, setTank] = useState('');
-  const [Bottle, setBottle] = useState('');
-  const [Pet, setPet] = useState('');
   
   const validationSchema = Yup.object().shape({
     Number: Yup.string().required('กรุณากรอกเลขบิล'),

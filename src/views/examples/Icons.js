@@ -19,40 +19,20 @@ import { useEffect, useState } from "react";
 import Axios from 'axios'
 import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-// react component that copies the given text inside your clipboard
-import { CopyToClipboard } from "react-copy-to-clipboard";
-// reactstrap components
 import {
   Button,
   Card,
   CardHeader,
-  CardBody,
   Container,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
   Col,
-  UncontrolledTooltip,
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
 
 const Icons = () => {
-  const [copiedText, setCopiedText] = useState();
   const todayDate = new Date().toLocaleDateString('en-CA')
-  const [GS, setGS] = useState(0);
-  const [GL, setGL] = useState(0);
-  const [GM, setGM] = useState(0);
-  const [date, setDate] = useState('');
   const [bot, setBot] = useState([]);
-  const add_manu = () => {
-    Axios.put('http://localhost:3001/add_manu', {
-      GL: GL, GM: GM, GS: GS, date: todayDate
-    })
-  }
+  
 
   const initialValues = {
     GL: 0,

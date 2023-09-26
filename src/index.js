@@ -27,7 +27,6 @@ import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
 import Deli from "layouts/Deliver";
 import Manu from "layouts/Manufac";
-import Profile from "views/examples/Profile";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(

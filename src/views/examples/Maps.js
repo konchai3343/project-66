@@ -19,36 +19,19 @@ import { useState } from "react";
 import Axios from 'axios'
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-// react component that copies the given text inside your clipboard
-import { CopyToClipboard } from "react-copy-to-clipboard";
-// reactstrap components
 import {
   Button,
   Card,
   CardHeader,
   CardBody,
   Container,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
   Col,
-  UncontrolledTooltip,
-  Alert,
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
 
 const Icons = () => {
   const todayDate = new Date().toLocaleDateString('en-CA')
-  const [Name, setName] = useState("");
-  const [Number, setNumber] = useState('');
-  const [Tank, setTank] = useState(0);
-  const [Bottle, setBottle] = useState(0);
-  const [Pet, setPet] = useState(0);
-  const [date, setDate] = useState('');
 
   const validationSchema = Yup.object().shape({
     Name: Yup.string().required('กรุณากรอกผู้ซื้อ'),
@@ -99,19 +82,6 @@ const Icons = () => {
     });
   };
 
-  const check_sale = () => {
-    Axios.post('http://localhost:3001/CheckNumber', {
-      Number: Number,
-      date: todayDate
-    }).then((Response) => {
-      if (Response.data.length == 0) {
-        add_sale()
-        alert('บันทึกสำเร็จ');
-      } else {
-        alert('ใบเสร็จนี้ถูกบันทึกไปแล้ว');
-      }
-    });
-  }
 
 
   return (

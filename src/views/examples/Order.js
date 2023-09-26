@@ -17,11 +17,6 @@
 */
 import { useEffect, useState } from "react";
 import Axios from "axios"
-
-
-// node.js library that concatenates classes (strings)
-import classnames from "classnames";
-// javascipt plugin for creating charts
 import Chart from "chart.js";
 
 
@@ -30,46 +25,27 @@ import {
   Button,
   Card,
   CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
   Table,
   Container,
   Row,
   Col,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Input
 } from "reactstrap";
 
 // core components
 import {
   chartOptions,
   parseOptions,
-  chartExample1,
-  chartExample2,
 } from "variables/charts.js";
 import Header from "components/Headers/Header.js";
 
 
 const Order = (props) => {
-  const todayDate = new Date().toLocaleDateString('en-CA')
   
-  
-  const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
-
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
 
-  const [Produc_list, setProduc_list] = useState([]);
   const [Sale_list, setsale_list] = useState([]);
-  const [date, setDate] = useState("");
   const Item = () => {
     Axios.get("http://localhost:3001/order").then((Response) => {
       setsale_list(Response.data);
@@ -86,20 +62,12 @@ const Order = (props) => {
   }
 
 
-  const [Name, setName] = useState("");
-  const [Number, setNumber] = useState(0);
-  const [Tank, setTank] = useState(0);
-  const [Bottle, setBottle] = useState(0);
-  const [Pet, setPet] = useState(0);
+  
   
 
   
 
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
+  
 
 
 

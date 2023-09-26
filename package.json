@@ -1,4 +1,5 @@
 {
+  "homepage": "https://konchai3343.github.io/project-66/",
   "name": "argon-dashboard-react",
   "version": "1.2.3",
   "description": "React version of Argon Dashboard by Creative Tim",
@@ -22,8 +23,9 @@
   "bugs": {
     "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
   },
-  "homepage": "https://demos.creative-tim.com/argon-dashboard-react/",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -56,6 +58,7 @@
     "datatables.net-dt": "^1.13.6",
     "dayjs": "^1.11.9",
     "formik": "^2.4.5",
+    "gh-pages": "^6.0.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.6.0",
     "mdbreact": "^5.2.0",
