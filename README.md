@@ -8,7 +8,6 @@
 Within the download you'll find the following directories and files:
 
 ```
-.
 ├── Documentation
 │   └── documentation.html
 ├── CHANGELOG.md
