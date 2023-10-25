@@ -21,6 +21,10 @@ Argon Dashboard React
 │   ├── favicon.ico
 │   ├── index.html
 │   └── manifest.json
+├── server
+│   ├── node_modules
+│   ├── index.jsx
+│   └── package.json
 └── src
     ├── assets
     │   ├── css
