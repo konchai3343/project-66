@@ -8,7 +8,6 @@
 Within the download you'll find the following directories and files:
 
 ```
-Argon Dashboard React
 .
 ├── Documentation
 │   └── documentation.html
