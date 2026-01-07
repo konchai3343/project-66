@@ -18,10 +18,10 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    user: "root",
-    host: "localhost",
+    user: "",
+    host: "",
     password: "",
-    database: "drink"
+    database: ""
 });
 
 app.get('/stock', (req, res) => {
